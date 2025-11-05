@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ja">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<title>Spaceおしたらいろかわるよ</title>
+	<style>
+	:root { color-scheme: light dark }
+	body { margin: 0; display: grid; place-items: center; min-height: 100vh; background: #fff; color: #333; transition: .3s }
+	body.flash { color: #fff }
+	#cd { font: 700 64px/1 ui-sans-serif, system-ui, sans-serif }
+	.palette {
+		position: fixed;
+		top: 32px;
+		right: 32px;
+		display: flex;
+		gap: 16px;
+	}
+	.color {
+		width: 32px;
+		height: 32px;
+		border-radius: 50%;
+		cursor: pointer;
+		transition: transform .1s, background .1s, box-shadow .1s;
+		background: var(--c);
+		transition: transform .1s;
+	}
+	.color:hover { transform: scale(1.1) }
+	.color.active {transform: scale(1.5); }
+	.color.active.flashing { background: #fff; transform: scale(1.5); }
+	</style>
+
+	<body>
+		<main><div id="cd" aria-live="polite"></div></main>
+		<div class="palette" id="palette"></div>
+	</body>
+
+	<script>
+	const cd = document.getElementById('cd');
+	const palette = document.getElementById('palette');
+	const colors = ['#ff4d4f', '#4caf50', '#2196f3', '#ffc107'];
+	let current = colors[0];
+	let selectedBtn = null;
+	let end = 0, raf = 0, to = 0;
+
+	colors.forEach((c, i) => {
+		const btn = document.createElement('div');
+		btn.className = 'color' + (i === 0 ? ' active' : '');
+		btn.style.setProperty('--c', c);
+		if (i === 0) selectedBtn = btn;
+		btn.onclick = () => {
+			current = c;
+			if (selectedBtn) selectedBtn.classList.remove('flashing');
+			document.querySelectorAll('.color').forEach(el => el.classList.remove('active'));
+			btn.classList.add('active');
+			// 選択中を更新
+			selectedBtn = btn;
+			// フラッシュ中なら白化を新しい選択に移す＆背景も更新
+			if (document.body.classList.contains('flash')) {
+				selectedBtn.classList.add('flashing');
+				document.body.style.background = current;
+			}
+		};
+		palette.appendChild(btn);
+	});
+
+	function tick() {
+		const left = Math.max(0, end - performance.now());
+		cd.textContent = left ? (left / 1000).toFixed(1) : '';
+		if (left) raf = requestAnimationFrame(tick);
+	}
+
+	function start() {
+		cancelAnimationFrame(raf);
+		clearTimeout(to);
+		document.body.classList.add('flash');
+		if (selectedBtn) selectedBtn.classList.add('flashing');
+		document.body.style.background = current;
+		end = performance.now() + 5000;
+		tick();
+		to = setTimeout(() => {
+			document.body.classList.remove('flash');
+			if (selectedBtn) selectedBtn.classList.remove('flashing');
+			document.body.style.background = '#fff';
+			cd.textContent = '';
+		}, 5000);
+	}
+
+	addEventListener('keydown', e => {
+		if (e.code === 'Space' && !e.repeat) {
+			e.preventDefault();
+			start();
+		}
+	});
+	</script>
+</html>
