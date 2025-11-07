@@ -91,6 +91,7 @@
 	addEventListener('keydown', e => {
 		if (e.code === 'Space' && !e.repeat) {
 			e.preventDefault();
+			audio.currentTime=0;
 			audio.play();
 			start();
 		}
