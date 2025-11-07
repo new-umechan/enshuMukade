@@ -38,6 +38,9 @@
 	const cd = document.getElementById('cd');
 	const palette = document.getElementById('palette');
 	const colors = ['#ff4d4f', '#4caf50', '#2196f3', '#ffc107'];
+
+	const audio = new Audio('./stop.mp3');
+
 	let current = colors[0];
 	let selectedBtn = null;
 	let end = 0, raf = 0, to = 0;
@@ -88,6 +91,7 @@
 	addEventListener('keydown', e => {
 		if (e.code === 'Space' && !e.repeat) {
 			e.preventDefault();
+			audio.play();
 			start();
 		}
 	});
