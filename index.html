@@ -39,7 +39,8 @@
 	const palette = document.getElementById('palette');
 	const colors = ['#ff4d4f', '#4caf50', '#2196f3', '#ffc107'];
 
-	const audio = new Audio('./stop.mp3');
+	const audio_start = new Audio('./start.mp3');
+	const audio_stop = new Audio('./stop.mp3');
 
 	let current = colors[0];
 	let selectedBtn = null;
@@ -85,14 +86,15 @@
 			if (selectedBtn) selectedBtn.classList.remove('flashing');
 			document.body.style.background = '#fff';
 			cd.textContent = '';
+			audio_start.play()
 		}, 5000);
 	}
 
 	addEventListener('keydown', e => {
 		if (e.code === 'Space' && !e.repeat) {
 			e.preventDefault();
-			audio.currentTime=0;
-			audio.play();
+			audio_stop.currentTime=0;
+			audio_stop.play();
 			start();
 		}
 	});
