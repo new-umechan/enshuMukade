@@ -76,6 +76,13 @@
 	function start() {
 		cancelAnimationFrame(raf);
 		clearTimeout(to);
+
+		// Iphoneで音がなるように修正
+		audio_start.play().then(() => {
+			audio_start.pause(); // 一回止めてからやる
+			audio_start.currentTime = 0;
+		})
+
 		document.body.classList.add('flash');
 		if (selectedBtn) selectedBtn.classList.add('flashing');
 		document.body.style.background = current;
@@ -86,6 +93,7 @@
 			if (selectedBtn) selectedBtn.classList.remove('flashing');
 			document.body.style.background = '#fff';
 			cd.textContent = '';
+
 			audio_start.play()
 		}, 5000);
 	}
